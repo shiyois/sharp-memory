@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SharpMemory.Core/SharpMemory.Core.csproj" />
+    <Project Path="src/SharpMemory.App/SharpMemory.App.csproj" />
+    <Project Path="src/SharpMemory.Tests/SharpMemory.Tests.csproj" />
+  </Folder>
+</Solution>
