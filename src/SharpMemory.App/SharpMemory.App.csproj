@@ -1,8 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latestmajor</LangVersion>
+    <NoWarn>$(NoWarn);MCP9004</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpMemory.Core\SharpMemory.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.2.0" />
+  </ItemGroup>
 </Project>

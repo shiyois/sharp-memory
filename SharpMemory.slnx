@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/docs/">
+    <File Path="docs/CODESTYLE.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/SharpMemory.Core/SharpMemory.Core.csproj" />
     <Project Path="src/SharpMemory.App/SharpMemory.App.csproj" />
