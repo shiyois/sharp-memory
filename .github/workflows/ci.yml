@@ -27,3 +27,7 @@ jobs:
 
       - name: Test
         run: dotnet test src/SharpMemory.Tests/SharpMemory.Tests.csproj --no-build --configuration Release
+
+      - name: Tool smoke test
+        shell: pwsh
+        run: ./eng/smoke-tool.ps1 -Configuration Release

@@ -3,8 +3,12 @@
   <File Path="README.md" />
   <File Path="CONTRIBUTING.md" />
   <File Path="SECURITY.md" />
+  <File Path="SETTINGS-FORMAT.md" />
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/eng/">
+    <File Path="eng/smoke-tool.ps1" />
   </Folder>
   <Folder Name="/docs/">
     <File Path="docs/CODESTYLE.md" />
@@ -12,6 +16,7 @@
   <Folder Name="/src/">
     <Project Path="src/SharpMemory.Core/SharpMemory.Core.csproj" />
     <Project Path="src/SharpMemory.App/SharpMemory.App.csproj" />
+    <Project Path="src/SharpMemory.Tool/SharpMemory.Tool.csproj" />
     <Project Path="src/SharpMemory.Tests/SharpMemory.Tests.csproj" />
   </Folder>
 </Solution>

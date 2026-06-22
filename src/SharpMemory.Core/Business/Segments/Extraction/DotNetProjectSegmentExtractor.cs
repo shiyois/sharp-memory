@@ -47,7 +47,7 @@ public sealed class DotNetProjectSegmentExtractor : ISegmentExtractor
             .ToList();
 
         var projectRefs = xml.Descendants(ns + "ProjectReference")
-            .Select(e => Path.GetFileNameWithoutExtension(e.Attribute("Include")?.Value ?? string.Empty))
+            .Select(e => GetProjectReferenceName(e.Attribute("Include")?.Value ?? string.Empty))
             .Where(projectName => projectName.Length > 0)
             .ToList();
 
@@ -71,5 +71,11 @@ public sealed class DotNetProjectSegmentExtractor : ISegmentExtractor
                 ["project_refs"] = string.Join(", ", projectRefs),
             },
         };
+    }
+
+    private static string GetProjectReferenceName(string includePath)
+    {
+        var normalized = includePath.Replace('\\', '/');
+        return Path.GetFileNameWithoutExtension(normalized);
     }
 }

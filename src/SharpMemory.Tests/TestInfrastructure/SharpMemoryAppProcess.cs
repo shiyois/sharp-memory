@@ -25,21 +25,13 @@ internal sealed class SharpMemoryAppProcess : IAsyncDisposable
     {
         var port = GetAvailablePort();
         var baseAddress = new Uri($"http://127.0.0.1:{port}");
-        var appDll = Path.Combine(
-            FindRepositoryRoot(),
-            "src",
-            "SharpMemory.App",
-            "bin",
-            "Debug",
-            "net10.0",
-            "SharpMemory.App.dll");
+        var appDll = Path.Combine(AppContext.BaseDirectory, "SharpMemory.App.dll");
 
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"\"{appDll}\" --repo \"{repositoryPath}\"",
                 WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -49,6 +41,9 @@ internal sealed class SharpMemoryAppProcess : IAsyncDisposable
             EnableRaisingEvents = true,
         };
 
+        process.StartInfo.ArgumentList.Add(appDll);
+        process.StartInfo.ArgumentList.Add("--repo");
+        process.StartInfo.ArgumentList.Add(repositoryPath);
         process.StartInfo.Environment["ASPNETCORE_URLS"] = baseAddress.ToString();
 
         var app = new SharpMemoryAppProcess(process, baseAddress);
@@ -128,21 +123,5 @@ internal sealed class SharpMemoryAppProcess : IAsyncDisposable
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
         listener.Stop();
         return port;
-    }
-
-    private static string FindRepositoryRoot()
-    {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current is not null)
-        {
-            if (File.Exists(Path.Combine(current.FullName, "SharpMemory.slnx")))
-            {
-                return current.FullName;
-            }
-
-            current = current.Parent;
-        }
-
-        throw new DirectoryNotFoundException("Could not find SharpMemory.slnx.");
     }
 }

@@ -20,7 +20,7 @@ public sealed class SettingsParserTests
             $$"""
             {
               "repositories": [
-                { "path": "{{settingsRepo.Replace("\\", "\\\\")}}" }
+                "{{settingsRepo.Replace("\\", "\\\\")}}"
               ]
             }
             """);
@@ -45,7 +45,7 @@ public sealed class SettingsParserTests
             {
               "repositories": [
                 "{{firstRepo.Replace("\\", "\\\\")}}",
-                { "path": "{{secondRepo.Replace("\\", "\\\\")}}" }
+                "{{secondRepo.Replace("\\", "\\\\")}}"
               ]
             }
             """);
