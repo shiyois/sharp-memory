@@ -6,6 +6,7 @@
   <File Path="SETTINGS-FORMAT.md" />
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/publish-nuget.yml" />
   </Folder>
   <Folder Name="/eng/">
     <File Path="eng/smoke-tool.ps1" />
