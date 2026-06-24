@@ -10,9 +10,29 @@ The current direction is local-first: run it on your machine, index repositories
 Install:
 ```bash
 dotnet tool install -g sharp-memory
+sharp-memory init
+```
+
+Edit `~/.sharp-memory/settings.json`:
+
+```json
+{
+  "repositories": [
+    "C:/path/to/repo"
+  ]
+}
+```
+
+Run SharpMemory from anywhere:
+
+```bash
 sharp-memory run
 ```
 
-Configure repositories in `settings.json`.
+Use `--repo <path>` only for temporary overrides:
+
+```bash
+sharp-memory run --repo C:/path/to/repo
+```
 
 This is not yet a stable product, hosted service, or public network API. Treat it as a local developer tool while the design is still moving.

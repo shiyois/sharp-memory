@@ -60,21 +60,34 @@ dotnet pack (Join-Path $repoRoot "src/SharpMemory.Tool/SharpMemory.Tool.csproj")
 dotnet tool install sharp-memory `
     --tool-path $toolPath `
     --configfile $nugetConfigPath `
-    --version 0.1.0
+    --version 0.2.0
 
-$port = Get-Random -Minimum 20000 -Maximum 50000
-$baseAddress = "http://127.0.0.1:$port"
 $toolExe = Join-Path $toolPath "sharp-memory"
 if ($IsWindows) {
     $toolExe = "$toolExe.exe"
 }
+
+$env:SHARPMEMORY_HOME = $storagePath
+& $toolExe init
+
+$settingsPath = Join-Path $storagePath "settings.json"
+@"
+{
+  "repositories": [
+    "$($repoPath.Replace("\", "/"))"
+  ]
+}
+"@ | Set-Content -Encoding UTF8 $settingsPath
+
+$port = Get-Random -Minimum 20000 -Maximum 50000
+$baseAddress = "http://127.0.0.1:$port"
 
 $outLog = Join-Path $storagePath "sharp-memory.out.log"
 $errLog = Join-Path $storagePath "sharp-memory.err.log"
 $env:ASPNETCORE_URLS = $baseAddress
 $startArgs = @{
     FilePath = $toolExe
-    ArgumentList = @("run", "--repo", $repoPath)
+    ArgumentList = @("run")
     WorkingDirectory = $storagePath
     RedirectStandardOutput = $outLog
     RedirectStandardError = $errLog
@@ -130,8 +143,8 @@ $stdioStart.RedirectStandardInput = $true
 $stdioStart.RedirectStandardOutput = $true
 $stdioStart.RedirectStandardError = $true
 $stdioStart.CreateNoWindow = $true
-$escapedRepoPath = $repoPath.Replace('"', '\"')
-$stdioStart.Arguments = "run --repo `"$escapedRepoPath`" --stdio"
+$stdioStart.Arguments = "run --stdio"
+$stdioStart.EnvironmentVariables["SHARPMEMORY_HOME"] = $storagePath
 
 $stdioProcess = [System.Diagnostics.Process]::Start($stdioStart)
 try {
@@ -146,4 +159,6 @@ finally {
         Stop-Process -Id $stdioProcess.Id -Force
         $stdioProcess.WaitForExit()
     }
+
+    Remove-Item Env:\SHARPMEMORY_HOME -ErrorAction SilentlyContinue
 }

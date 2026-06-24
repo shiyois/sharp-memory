@@ -8,6 +8,8 @@ using SharpMemory.Core.Business.Snapshots;
 using SharpMemory.Core.Business.Snapshots.Models;
 using SharpMemory.Core.Storage.Interfaces;
 using SharpMemory.Core.Storage.Sqlite;
+using SharpMemoryPaths = SharpMemory.App.Infrastructure.Settings.SharpMemoryPaths;
+using SharpMemorySettings = SharpMemory.App.Infrastructure.Settings.Settings;
 
 namespace SharpMemory.App.Infrastructure.DI;
 
@@ -15,7 +17,7 @@ public static class SharpMemoryServiceCollectionExtensions
 {
     public static IServiceCollection AddSharpMemory(
         this IServiceCollection services,
-        Settings.Settings runtimeOptions)
+        SharpMemorySettings runtimeOptions)
     {
         services.AddSingleton(runtimeOptions);
         services.AddSingleton(
@@ -27,6 +29,7 @@ public static class SharpMemoryServiceCollectionExtensions
             new SqliteStorageOptions
             {
                 StorageRoot = runtimeOptions.StorageRoot,
+                DatabasePath = Path.Combine(runtimeOptions.StorageRoot, SharpMemoryPaths.DatabaseFileName),
             });
         services.AddSingleton<SqliteConnectionFactory>();
 

@@ -8,7 +8,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>sharp-memory</ToolCommandName>
     <PackageId>sharp-memory</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Maksim Kusyi</Authors>
     <Description>Local memory layer for coding agents, focused on .NET projects.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

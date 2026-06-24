@@ -5,6 +5,9 @@ namespace SharpMemory.Core.Business.Segments;
 
 public sealed class RepositoryScanner
 {
+    private readonly Func<string, IEnumerable<string>> enumerateDirectories;
+    private readonly Func<string, IEnumerable<string>> enumerateFiles;
+
     private static readonly HashSet<string> SkippedDirectoryNames = new(StringComparer.OrdinalIgnoreCase)
     {
         ".git",
@@ -18,6 +21,19 @@ public sealed class RepositoryScanner
         "node_modules",
     };
 
+    public RepositoryScanner()
+        : this(Directory.EnumerateDirectories, Directory.EnumerateFiles)
+    {
+    }
+
+    internal RepositoryScanner(
+        Func<string, IEnumerable<string>> enumerateDirectories,
+        Func<string, IEnumerable<string>> enumerateFiles)
+    {
+        this.enumerateDirectories = enumerateDirectories;
+        this.enumerateFiles = enumerateFiles;
+    }
+
     public async IAsyncEnumerable<string> Scan(string rootPath)
     {
         var gitIgnore = GitIgnoreMatcher.Load(rootPath) ?? GitIgnoreMatcher.Empty;
@@ -25,7 +41,7 @@ public sealed class RepositoryScanner
 
         while (stack.TryPop(out var directory))
         {
-            foreach (var subdirectory in Directory.EnumerateDirectories(directory))
+            foreach (var subdirectory in Enumerate(enumerateDirectories, directory))
             {
                 if (SkippedDirectoryNames.Contains(Path.GetFileName(subdirectory)))
                 {
@@ -40,7 +56,7 @@ public sealed class RepositoryScanner
                 }
             }
 
-            foreach (var filePath in Directory.EnumerateFiles(directory))
+            foreach (var filePath in Enumerate(enumerateFiles, directory))
             {
                 var relative = Path.GetRelativePath(rootPath, filePath).ToUnixPath();
 
@@ -52,5 +68,19 @@ public sealed class RepositoryScanner
         }
 
         await Task.CompletedTask;
+    }
+
+    private static IReadOnlyList<string> Enumerate(
+        Func<string, IEnumerable<string>> enumerate,
+        string directory)
+    {
+        try
+        {
+            return enumerate(directory).ToList();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return [];
+        }
     }
 }

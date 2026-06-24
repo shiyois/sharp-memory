@@ -2,6 +2,7 @@
 
 ## Naming
 
+- Name private fields in `camelCase` without a leading underscore. Use `this.fieldName` when a field name conflicts with a parameter or local variable.
 - Do not use `Async` suffix for SharpMemory methods, local variables, fields, properties, parameters, or tuple members.
 - The only allowed `Async` names are external framework/API members we implement or call, such as `IHostedService.StartAsync`, `IHostedService.StopAsync`, `Task.WaitAsync`, or `File.ReadAllBytesAsync`.
 - Name methods and variables by their domain role, not by the implementation detail that they return or await a `Task`.

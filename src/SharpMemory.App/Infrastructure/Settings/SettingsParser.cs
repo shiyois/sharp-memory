@@ -7,7 +7,7 @@ public static class SettingsParser
     public static Settings Parse(string[] args)
     {
         var cliRepoPaths = new List<string>();
-        var storageRoot = FindProjectRoot(Environment.CurrentDirectory);
+        var storageRoot = SharpMemoryPaths.ResolveHomePath();
         var useStdio = false;
 
         for (var i = 0; i < args.Length; i++)
@@ -25,12 +25,7 @@ public static class SettingsParser
 
         var repoPaths = cliRepoPaths.Count > 0
             ? cliRepoPaths
-            : LoadRepositoryPathsFromSettings(storageRoot);
-
-        if (repoPaths.Count == 0)
-        {
-            repoPaths.Add(storageRoot);
-        }
+            : LoadRepositoryPathsFromSettings(ResolveSettingsPath());
 
         return new Settings
         {
@@ -40,25 +35,16 @@ public static class SettingsParser
         };
     }
 
-    private static string FindProjectRoot(string startPath)
+    private static string ResolveSettingsPath()
     {
-        var current = new DirectoryInfo(Path.GetFullPath(startPath));
-        while (current is not null)
-        {
-            if (File.Exists(Path.Combine(current.FullName, "SharpMemory.slnx")))
-            {
-                return current.FullName;
-            }
-
-            current = current.Parent;
-        }
-
-        return Path.GetFullPath(startPath);
+        var localSettingsPath = Path.Combine(Environment.CurrentDirectory, SharpMemoryPaths.SettingsFileName);
+        return File.Exists(localSettingsPath)
+            ? localSettingsPath
+            : SharpMemoryPaths.ResolveSettingsPath();
     }
 
-    private static List<string> LoadRepositoryPathsFromSettings(string storageRoot)
+    private static List<string> LoadRepositoryPathsFromSettings(string settingsPath)
     {
-        var settingsPath = Path.Combine(storageRoot, "settings.json");
         if (!File.Exists(settingsPath))
         {
             return [];

@@ -38,4 +38,48 @@ public sealed class RepositoryScannerTests
         files.Should().NotContain("bin/Generated.cs");
         files.Should().NotContain("node_modules/pkg/index.js");
     }
+
+    [Test]
+    public async Task Scan_WhenDirectoryCannotBeOpened_SkipsDirectoryAndContinues()
+    {
+        using var temp = new TempDirectory();
+        var deniedDirectory = temp.CreateDirectory("denied");
+        var srcDirectory = temp.CreateDirectory("src");
+        var sourceFile = temp.WriteFile("src/Program.cs", "class Program { }");
+
+        var scanner = new RepositoryScanner(EnumerateDirectories, EnumerateFiles);
+
+        var files = new List<string>();
+        await foreach (var file in scanner.Scan(temp.Path))
+        {
+            files.Add(file);
+        }
+
+        files.Should().ContainSingle().Which.Should().Be(sourceFile);
+        return;
+
+        IEnumerable<string> EnumerateDirectories(string directory)
+        {
+            if (directory == deniedDirectory)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            return directory == temp.Path
+                ? [deniedDirectory, srcDirectory]
+                : [];
+        }
+
+        IEnumerable<string> EnumerateFiles(string directory)
+        {
+            if (directory == deniedDirectory)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            return directory == srcDirectory
+                ? [sourceFile]
+                : [];
+        }
+    }
 }
