@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using SharpMemory.App.Infrastructure.Settings;
 
 namespace SharpMemory.Tests.TestInfrastructure;
 
@@ -45,6 +46,7 @@ internal sealed class SharpMemoryAppProcess : IAsyncDisposable
         process.StartInfo.ArgumentList.Add("--repo");
         process.StartInfo.ArgumentList.Add(repositoryPath);
         process.StartInfo.Environment["ASPNETCORE_URLS"] = baseAddress.ToString();
+        process.StartInfo.Environment[SharpMemoryPaths.HomeEnvironmentVariable] = workingDirectory;
 
         var app = new SharpMemoryAppProcess(process, baseAddress);
         process.OutputDataReceived += (_, e) => app.AppendOutput(e.Data);
